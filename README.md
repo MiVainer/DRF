@@ -1,2 +1,3 @@
 # DRF
-Django Rest Framework
+Django Rest Framework.
+Взаимодействие с базой данных.
