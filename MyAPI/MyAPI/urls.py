@@ -15,11 +15,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+from rest_framework import routers
+from skills.views import *
 
-from skills.views import SkillAPIView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/v1/skills/", SkillAPIView.as_view())
+    path('api/v1/drf-auth/', include('rest_framework.urls')), #Авторизация на основе сессии
+    path('api/v1/skills/', SkillAPIList.as_view()),
+    path('api/v1/skills/<int:pk>/', SkillAPIUpdate.as_view()),
+    path('api/v1/skills_delete/<int:pk>/', SkillAPIDestroy.as_view()),
+    path('api/v1/auth', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
+
+
+
+    #path("api/v1/skills/", SkillViewSet.as_view({'get': 'list'})), #GET, POST методы
+    #path("api/v1/skills/<int:pk>/", SkillViewSet.as_view({'put': 'update'})), # PUT
 ]
