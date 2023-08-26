@@ -1,5 +1,6 @@
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -25,6 +26,11 @@ from .serializer import SkillSerializer
         cats = Category.objects.get(pk=pk)
         return Response({'cats': cats.name})
 '''
+#Создаём класс пагинации, разбиение страницы
+class SkillAPIListPagination(PageNumberPagination):
+    page_size = 3 #разбиваем по сколько записей будет показывать на странице
+    page_query_param = 'page_size'
+    max_page_size = 10000
 
 
 #  3 класса ниже можно заменить одним ViewSet
@@ -32,12 +38,13 @@ class SkillAPIList(generics.ListCreateAPIView):
     queryset = Skills.objects.all()
     serializer_class = SkillSerializer # название сериализатора из serializer.py
     permission_classes = (IsAuthenticatedOrReadOnly, ) #Настраиваем возможность просмотра только для авторизованнх пользователей
-
+    pagination_class = SkillAPIListPagination # Подключили класс пагинации к виду
 
 class SkillAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Skills.objects.all()
     serializer_class = SkillSerializer
     permission_classes = (IsAuthenticated, )
+    #permission_classes = (TokenAuthentication, )
 
 class SkillAPIDestroy(generics.RetrieveDestroyAPIView):
     queryset = Skills.objects.all()
